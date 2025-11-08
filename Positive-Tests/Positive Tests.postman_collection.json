@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "f60c1fd7-a87c-4c9c-ab24-12087bc5720f",
+		"name": "Positive Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40649361"
+	},
+	"item": [
+		{
+			"name": "Upload Free Text",
+			"item": [
+				{
+					"name": "cutting board",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const body = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response succeeded\", function () {\r",
+									"    pm.expect(body.status).to.eql(\"Succeeded\");\r",
+									"    pm.expect(body.isSuccess).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Matched items exist\", function () {\r",
+									"    pm.expect(body.result.matchedItems, \"matchedItems missing\").to.be.an(\"array\").that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"const keyTerm = \"Cutting Board\".toLowerCase();\r",
+									"let found = false;\r",
+									"\r",
+									"body.result.matchedItems.forEach(item => {\r",
+									"    if (item.matchedInternalProducts) {\r",
+									"        item.matchedInternalProducts.forEach(product => {\r",
+									"            if (product.name && product.name.toLowerCase().includes(keyTerm)) {\r",
+									"                found = true;\r",
+									"            }\r",
+									"        });\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(`Response includes key product term: ${keyTerm}`, function () {\r",
+									"    pm.expect(found, `No product name contained '${keyTerm}'`).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each match includes confidence or similarity score\", function () {\r",
+									"    let hasScore = false;\r",
+									"    body.result.matchedItems.forEach(item => {\r",
+									"        item.matchedInternalProducts.forEach(product => {\r",
+									"            if (product.percentage !== undefined && typeof product.percentage === \"number\") {\r",
+									"                hasScore = true;\r",
+									"            }\r",
+									"        });\r",
+									"    });\r",
+									"    pm.expect(hasScore, \"No percentage field found\").to.be.true;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"text\": \"Choice 24 x 18 x 1/2 Green Polyethylene Cutting Board\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://intelligence-dev.setvi.com/api/rfq/upload-free-text",
+							"protocol": "https",
+							"host": [
+								"intelligence-dev",
+								"setvi",
+								"com"
+							],
+							"path": [
+								"api",
+								"rfq",
+								"upload-free-text"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Upload URL",
+			"item": [
+				{
+					"name": "cutting board/polyethylene",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse JSON response safely\r",
+									"let body;\r",
+									"try {\r",
+									"    body = pm.response.json();\r",
+									"} catch (e) {\r",
+									"    pm.test(\"Response is valid JSON\", function () {\r",
+									"        throw new Error(\"Invalid JSON response\");\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"// ✅ 1. Assert status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// ✅ 2. Confirm success in response\r",
+									"pm.test(\"Response succeeded\", function () {\r",
+									"    pm.expect(body.status).to.eql(\"Succeeded\");\r",
+									"    pm.expect(body.isSuccess).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// ✅ 3. Verify matchedItems exist\r",
+									"pm.test(\"Matched items exist\", function () {\r",
+									"    pm.expect(body.result.matchedItems, \"matchedItems missing\").to.be.an(\"array\").that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"// ✅ 4. Validate that at least one match contains key terms\r",
+									"const keyTerms = [\"cutting board\", \"polyethylene\"];\r",
+									"let found = false;\r",
+									"\r",
+									"body.result.matchedItems.forEach(item => {\r",
+									"    item.matchedInternalProducts?.forEach(product => {\r",
+									"        const name = (product.name || \"\").toLowerCase();\r",
+									"        const desc = (product.description || \"\").toLowerCase();\r",
+									"        keyTerms.forEach(term => {\r",
+									"            if (name.includes(term) || desc.includes(term)) {\r",
+									"                found = true;\r",
+									"            }\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"At least one matched product contains key term (cutting board/polyethylene)\", function () {\r",
+									"    pm.expect(found, \"No match contains expected terms\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"// ✅ 5. Verify each match includes a similarity/confidence score\r",
+									"pm.test(\"Each match includes confidence or similarity score\", function () {\r",
+									"    let hasScore = false;\r",
+									"    body.result.matchedItems.forEach(item => {\r",
+									"        item.matchedInternalProducts?.forEach(product => {\r",
+									"            if (typeof product.percentage === \"number\") {\r",
+									"                hasScore = true;\r",
+									"            }\r",
+									"        });\r",
+									"    });\r",
+									"    pm.expect(hasScore, \"No similarity score found\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"// ✅ 6. Optional logging for debugging\r",
+									"console.log(\"Matched item count:\", body.result.matchedItems.length);\r",
+									"body.result.matchedItems.forEach((item, i) => {\r",
+									"    item.matchedInternalProducts?.forEach(product => {\r",
+									"        console.log(`Match ${i + 1}: ${product.name} (${product.percentage || 'no score'}%)`);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"url\": \"https://www.webstaurantstore.com/choice-24-x-18-x-1-2-green-polyethylene-cutting-board/40724185GN.html\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://intelligence-dev.setvi.com/api/rfq/upload-url-html",
+							"protocol": "https",
+							"host": [
+								"intelligence-dev",
+								"setvi",
+								"com"
+							],
+							"path": [
+								"api",
+								"rfq",
+								"upload-url-html"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"value": "",
+			"disabled": true
+		}
+	]
+}
