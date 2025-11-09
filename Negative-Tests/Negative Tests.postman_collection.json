@@ -1,18 +1,344 @@
 {
 	"info": {
-		"_postman_id": "9bdec12b-1b41-4a41-bd4f-9c40ae7e1c7e",
-		"name": "Negative Tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_postman_id": "69d940c3-ebd3-48d1-b28a-2c65021c9bab",
+		"name": "Negative Tests Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "40649361"
 	},
 	"item": [
 		{
 			"name": "Upload Free Text",
-			"item": []
+			"item": [
+				{
+					"name": "Upload Free Text - Empty String",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response indicates empty or null text\", function () {\r",
+									"    pm.expect(jsonData.Message).to.include(\"must not be null or whitespace\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"API indicates failure\", function () {\r",
+									"    pm.expect(jsonData.IsSuccess).to.be.false;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"text\": \"\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-free-text"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Free Text - Malformed JSON",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response indicates API failure\", function () {\r",
+									"    let jsonData = {};\r",
+									"    try {\r",
+									"        jsonData = pm.response.json();\r",
+									"    } catch (e) {\r",
+									"        pm.expect.fail(\"Response is not valid JSON\");\r",
+									"    }\r",
+									"    \r",
+									"    pm.expect(jsonData).to.have.property(\"errors\");\r",
+									"    \r",
+									"    pm.expect(jsonData.errors).to.have.property(\"request\")\r",
+									"        .that.is.an(\"array\")\r",
+									"        .that.is.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"text\": \"Choice 4 Qt. White Square Polypropylene Food Storage Container and Green Lid - 6/Pack,\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-free-text"
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Upload URL",
-			"item": []
+			"item": [
+				{
+					"name": "Upload URL - Invalid URL",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code indicates error\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"API indicates failure\", function () {\r",
+									"    pm.expect(response.IsSuccess).to.eql(false);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response mentions invalid URL or bad request\", function () {\r",
+									"    pm.expect(response.Message).to.include(\"Bad Request\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"url\": \"htt://www.webstaurantstore.com/choice-24-x-18-x-1-2-green-polyethylene-cutting-board/40724185GN.html\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-url-html"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload URL - Empty URL",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code indicates error\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"API indicates failure\", function () {\r",
+									"    pm.expect(response.IsSuccess).to.eql(false);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response mentions empty or required URL\", function () {\r",
+									"    pm.expect(response.Message).to.match(/url|required|empty/i);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"url\": \"\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-url-html"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload URL - Page with No Product Data",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"No matched items exist\", function () {\r",
+									"    pm.expect(responseJson.result.matchedItems.length).to.eql(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"API indicates success\", function () {\r",
+									"    pm.expect(responseJson.isSuccess).to.eql(true);\r",
+									"});\r",
+									"\r",
+									"console.log(\"Page tested for no product data:\", responseJson.url || \"No URL field in response\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"url\": \"https://www.setvi.com/company/about-team\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-url-html"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

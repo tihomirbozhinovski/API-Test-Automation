@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "f60c1fd7-a87c-4c9c-ab24-12087bc5720f",
-		"name": "Positive Tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_postman_id": "aa6a7873-5771-4d0e-b66e-13c010e2ff0a",
+		"name": "Positive Tests Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "40649361"
 	},
 	"item": [
@@ -102,20 +102,108 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "https://intelligence-dev.setvi.com/api/rfq/upload-free-text",
-							"protocol": "https",
-							"host": [
-								"intelligence-dev",
-								"setvi",
-								"com"
-							],
-							"path": [
-								"api",
-								"rfq",
-								"upload-free-text"
-							]
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-free-text"
+					},
+					"response": []
+				},
+				{
+					"name": "4 qt or container",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const body = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response succeeded\", function () {\r",
+									"    pm.expect(body.status).to.eql(\"Succeeded\");\r",
+									"    pm.expect(body.isSuccess).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Matched items exist\", function () {\r",
+									"    pm.expect(body.result.matchedItems, \"matchedItems missing\").to.be.an(\"array\").that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"const keyTerms = [\"4 qt\", \"container\"];\r",
+									"let found = false;\r",
+									"\r",
+									"body.result.matchedItems.forEach(item => {\r",
+									"    item.matchedInternalProducts?.forEach(product => {\r",
+									"        const name = product.name?.toLowerCase() || \"\";\r",
+									"        keyTerms.forEach(term => {\r",
+									"            if (name.includes(term)) found = true;\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"At least one matched product contains a key term (4 qt or container)\", function () {\r",
+									"    pm.expect(found, \"No product matched the key terms\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each match includes confidence or similarity score\", function () {\r",
+									"    let hasScore = false;\r",
+									"    body.result.matchedItems.forEach(item => {\r",
+									"        item.matchedInternalProducts.forEach(product => {\r",
+									"            if (typeof product.percentage === \"number\") hasScore = true;\r",
+									"        });\r",
+									"    });\r",
+									"    pm.expect(hasScore, \"No similarity score found in matches\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"console.log(\"Matched item count:\", body.result.matchedItems.length);\r",
+									"body.result.matchedItems.forEach((item, i) => {\r",
+									"    item.matchedInternalProducts.forEach(product => {\r",
+									"        console.log(`Match ${i + 1}: ${product.name} (${product.percentage || 'no score'}%)`);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
 						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"text\": \"Choice 4 Qt. White Square Polypropylene Food Storage Container and Green Lid - 6/Pack\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-free-text"
 					},
 					"response": []
 				}
@@ -142,7 +230,6 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"// Parse JSON response safely\r",
 									"let body;\r",
 									"try {\r",
 									"    body = pm.response.json();\r",
@@ -152,23 +239,19 @@
 									"    });\r",
 									"}\r",
 									"\r",
-									"// ✅ 1. Assert status code\r",
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
-									"// ✅ 2. Confirm success in response\r",
 									"pm.test(\"Response succeeded\", function () {\r",
 									"    pm.expect(body.status).to.eql(\"Succeeded\");\r",
 									"    pm.expect(body.isSuccess).to.be.true;\r",
 									"});\r",
 									"\r",
-									"// ✅ 3. Verify matchedItems exist\r",
 									"pm.test(\"Matched items exist\", function () {\r",
 									"    pm.expect(body.result.matchedItems, \"matchedItems missing\").to.be.an(\"array\").that.is.not.empty;\r",
 									"});\r",
 									"\r",
-									"// ✅ 4. Validate that at least one match contains key terms\r",
 									"const keyTerms = [\"cutting board\", \"polyethylene\"];\r",
 									"let found = false;\r",
 									"\r",
@@ -188,7 +271,6 @@
 									"    pm.expect(found, \"No match contains expected terms\").to.be.true;\r",
 									"});\r",
 									"\r",
-									"// ✅ 5. Verify each match includes a similarity/confidence score\r",
 									"pm.test(\"Each match includes confidence or similarity score\", function () {\r",
 									"    let hasScore = false;\r",
 									"    body.result.matchedItems.forEach(item => {\r",
@@ -201,7 +283,6 @@
 									"    pm.expect(hasScore, \"No similarity score found\").to.be.true;\r",
 									"});\r",
 									"\r",
-									"// ✅ 6. Optional logging for debugging\r",
 									"console.log(\"Matched item count:\", body.result.matchedItems.length);\r",
 									"body.result.matchedItems.forEach((item, i) => {\r",
 									"    item.matchedInternalProducts?.forEach(product => {\r",
@@ -234,20 +315,114 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "https://intelligence-dev.setvi.com/api/rfq/upload-url-html",
-							"protocol": "https",
-							"host": [
-								"intelligence-dev",
-								"setvi",
-								"com"
-							],
-							"path": [
-								"api",
-								"rfq",
-								"upload-url-html"
-							]
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-url-html"
+					},
+					"response": []
+				},
+				{
+					"name": "4 qt, container, polypropylene, or lid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let body;\r",
+									"try {\r",
+									"    body = pm.response.json();\r",
+									"} catch (e) {\r",
+									"    pm.test(\"Response is valid JSON\", function () {\r",
+									"        throw new Error(\"Invalid JSON response\");\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response succeeded\", function () {\r",
+									"    pm.expect(body.status).to.eql(\"Succeeded\");\r",
+									"    pm.expect(body.isSuccess).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Matched items exist\", function () {\r",
+									"    pm.expect(body.result.matchedItems, \"matchedItems missing\").to.be.an(\"array\").that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"const keyTerms = [\"4 qt\", \"container\", \"polypropylene\", \"lid\"];\r",
+									"let found = false;\r",
+									"\r",
+									"body.result.matchedItems.forEach(item => {\r",
+									"    item.matchedInternalProducts?.forEach(product => {\r",
+									"        const name = (product.name || \"\").toLowerCase();\r",
+									"        const desc = (product.description || \"\").toLowerCase();\r",
+									"        keyTerms.forEach(term => {\r",
+									"            if (name.includes(term) || desc.includes(term)) {\r",
+									"                found = true;\r",
+									"            }\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"At least one matched product contains a key term (4 qt, container, polypropylene, or lid)\", function () {\r",
+									"    pm.expect(found, \"No product contained any key terms\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each match includes confidence or similarity score\", function () {\r",
+									"    let hasScore = false;\r",
+									"    body.result.matchedItems.forEach(item => {\r",
+									"        item.matchedInternalProducts?.forEach(product => {\r",
+									"            if (typeof product.percentage === \"number\") {\r",
+									"                hasScore = true;\r",
+									"            }\r",
+									"        });\r",
+									"    });\r",
+									"    pm.expect(hasScore, \"No similarity/confidence score found\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"console.log(\"Matched item count:\", body.result.matchedItems.length);\r",
+									"body.result.matchedItems.forEach((item, i) => {\r",
+									"    item.matchedInternalProducts?.forEach(product => {\r",
+									"        console.log(`Match ${i + 1}: ${product.name} (${product.percentage || 'no score'}%)`);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
 						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ApiKey a7a91f48-0371-4680-b69d-7928d9c1c9ad",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"statusId\": \"string\",\r\n  \"url\": \"https://www.webstaurantstore.com/choice-4-qt-white-square-polypropylene-food-storage-container-and-green-lid-pack/176SQWH4KT6.html\",\r\n  \"topK\": 3,\r\n  \"threshold\": 0.5,\r\n  \"enablePrivateLabelRanking\": false,\r\n  \"enableStockProductRanking\": false,\r\n  \"enableVendorRanking\": false,\r\n  \"enableProductRanking\": false,\r\n  \"useOldReranking\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://intelligence-dev.setvi.com/api/rfq/upload-url-html"
 					},
 					"response": []
 				}
